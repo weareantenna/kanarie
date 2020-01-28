@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+    nginx-proxy:
+        image: jwilder/nginx-proxy:alpine
+        container_name: nginx-proxy
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - conf:/etc/nginx/conf.d
+            - vhost:/etc/nginx/vhost.d
+            - html:/usr/share/nginx/html
+            - dhparam:/etc/nginx/dhparam
+            - certs:/etc/nginx/certs:ro
+            - /var/run/docker.sock:/tmp/docker.sock:ro
+
+    letsencrypt:
+        image: jrcs/letsencrypt-nginx-proxy-companion
+        container_name: nginx-proxy-le
+        volumes_from:
+            - nginx-proxy
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        environment:
+            - DEFAULT_EMAIL=bram@weareantenna.be
+
+    antenna-dev-landing:
+        build:
+            context: ./
+            dockerfile: docker/landing/Dockerfile
+        image: antenna/landing-dev
+        environment:
+            - VIRTUAL_HOST=antenna.dev
+            - LETSENCRYPT_HOST=antenna.dev
+
+volumes:
+    conf:
+    vhost:
+    html:
+    dhparam:
+    certs:
