@@ -40,3 +40,6 @@ volumes:
     html:
     dhparam:
     certs:
+
+networks:
+    antennadev:
