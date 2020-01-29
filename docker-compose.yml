@@ -7,8 +7,6 @@ services:
         ports:
             - "80:80"
             - "443:443"
-        networks:
-            - antennadev
         volumes:
             - conf:/etc/nginx/conf.d
             - vhost:/etc/nginx/vhost.d
@@ -22,8 +20,6 @@ services:
         container_name: nginx-proxy-le
         volumes_from:
             - nginx-proxy
-        networks:
-            - antennadev
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro
         environment:
@@ -34,8 +30,6 @@ services:
             context: ./
             dockerfile: docker/landing/Dockerfile
         image: antenna/landing-dev
-        networks:
-            - antennadev
         environment:
             - VIRTUAL_HOST=antenna.dev
             - LETSENCRYPT_HOST=antenna.dev
@@ -48,4 +42,6 @@ volumes:
     certs:
 
 networks:
-    antennadev:
+    default:
+        external:
+            name: antennadev
