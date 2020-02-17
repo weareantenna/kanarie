@@ -2,8 +2,6 @@
 
 Kanarie can be used to host multiple websites on a single host. It uses [an nginx proxy](https://github.com/jwilder/nginx-proxy) with SSL certificates through [Let's Encrypt](https://letsencrypt.org/).  
 
-It is currently running on [antenna.dev](https://antenna.dev) and this project still includes that landing website.
-
 ## Setting up Kanarie
 
 1. Install Docker and Docker compose on the host
@@ -30,7 +28,7 @@ FROM nginx:1.17-alpine
 COPY ./<your-directory-with-files-here> /code/public  
 COPY ./docker/kanarie/default.conf /etc/nginx/conf.d/default.conf
 ``` 
-For nginx containers, you also want to replace the default.conf file with your own, for static websites, it can look a little something like this:
+For nginx containers, you also want to replace the default.conf file with your own. For static websites, it can look a little something like this:
 ```
 # docker/<project-name>/default.conf
 server {
@@ -40,6 +38,7 @@ server {
     root                /code/public;
 
     location / {
+        try_files $uri $uri/ /index.html;
     }
 }
 
@@ -84,15 +83,18 @@ services:
         environment:
             - VIRTUAL_HOST=<domainname-of-project>
             - LETSENCRYPT_HOST=<domainname-of-project>
+        networks:
+            - default
+            - kanarie
 
     project-redis:
         image: redis:5.0
+        networks:
+            - default
 
 networks:
-    default:
-        external:
-            name: kanarie
-
+    kanarie:
+        external: true
 ```
 
 Notes:

@@ -23,16 +23,7 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock:ro
         environment:
-            - DEFAULT_EMAIL=bram@weareantenna.be
-
-    antenna-dev-landing:
-        build:
-            context: ./
-            dockerfile: docker/landing/Dockerfile
-        image: antenna/landing-dev
-        environment:
-            - VIRTUAL_HOST=antenna.dev
-            - LETSENCRYPT_HOST=antenna.dev
+            - DEFAULT_EMAIL=info@weareantenna.be
 
 volumes:
     conf:
